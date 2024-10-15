@@ -3,9 +3,10 @@ import requests
 from bs4 import BeautifulSoup
 
 def cargo_campeones():
-    with open('campeones_lol.json', 'r') as file:
+    ruta_archivo = r'C:\Users\terra\OneDrive\Escritorio\ProyectoLoldle\IA-Loldle-\campeones_lol.json'
+    with open(ruta_archivo, 'r') as file:
         campeones = json.load(file)
-        print(campeones)
+    print(campeones)
 
 
 def ver_solicitud():
