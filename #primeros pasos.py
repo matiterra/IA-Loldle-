@@ -1,35 +1,52 @@
 import json
 import requests
-from bs4 import BeautifulSoup
+import time
+import os
 
 def cargo_campeones():
     ruta_archivo = r'C:\Users\terra\OneDrive\Escritorio\ProyectoLoldle\IA-Loldle-\campeones_lol.json'
     with open(ruta_archivo, 'r') as file:
         campeones = json.load(file)
-    print(campeones)
+    return campeones
 
-
-def ver_solicitud():
-    #cargo página
-    url = "https://www.leagueoflegends.com/es-mx/champions/"
+def descargar_imagen(url, nombre_archivo):
     response = requests.get(url)
-
-    #veo status
+    
     if response.status_code == 200:
-        print("La página responde")
-        #uso jabón bello para encontrar los splash arts del lolsito
-        soup = BeautifulSoup(response.content, 'html.parser')
+        with open(nombre_archivo, 'wb') as file:
+            file.write(response.content)
+        print(f"Imagen descargada exitosamente: {nombre_archivo}")
     else:
-        print(f"Error en la solicitud: {response.status_code}")
+        print(f"Error al descargar la imagen: {response.status_code}")
 
-    print(response)
-    print(soup.title.string)
-    #printeo todo el html
-    print(soup.prettify())
+def ver_solicitud(campeones):
 
+    bandera = True
+    while bandera:  
 
+        for campeon in campeones:
+            for numero in range(30):
+                nombre_archivo = f"{campeon}_{numero}.jpg"
 
+            
+                if os.path.exists(nombre_archivo):
+                    print(f"La imagen {nombre_archivo} ya existe. Saltando descarga.")
+                    continue  
+
+                url = f"https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{campeon}_{numero}.jpg"
+            
+            
+                response = requests.get(url)
+            
+                if response.status_code == 200:
+                    print(f"Imagen encontrada: {campeon}_{numero}")
+                    descargar_imagen(url, nombre_archivo)
+
+                else:
+                    print(f"No se encontró la imagen para {campeon}_{numero}. Código: {response.status_code}")
+                    bandera = False
 def main():
-    ver_solicitud()
-    cargo_campeones()
+    campeones = cargo_campeones()
+    ver_solicitud(campeones)
+
 main()
